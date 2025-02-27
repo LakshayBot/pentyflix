@@ -69,7 +69,8 @@ const PasswordInput: React.FC = () => {
         type={showPassword ? "text" : "password"}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="pr-10 border-0 focus-visible:ring-0" // Remove border and focus ring
+        className="pr-10 border-0 focus-visible:ring-0" 
+        placeholder="Enter the Passwword to open the door"
       />
       <button
         type="button"
