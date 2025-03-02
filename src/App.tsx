@@ -1,9 +1,23 @@
-import { GalleryVerticalEnd } from "lucide-react"
-import {LoginForm} from "./layouts/login-form"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/stores/auth/auth-context";
+import { LoginForm } from "@/layouts/login-form";
+import Dashboard from "@/pages/dashboard";
+import "./App.css";
+import { GalleryVerticalEnd } from "lucide-react";
 import signinImage from "./images/siginI_image.jpg"
 
+// Protected route component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
 
-export default function App() {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  return <>{children}</>;
+};
+
+const LoginPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -29,6 +43,35 @@ export default function App() {
         />
       </div>
     </div>
-  )
+  );
+};
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <Routes>
+      <Route path="/login" element={
+        isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
+    </Routes>
+  );
 }
 
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
