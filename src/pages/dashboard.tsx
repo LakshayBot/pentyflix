@@ -1,18 +1,46 @@
 import { useAuth } from "@/stores/auth/auth-context";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
     const { user, logout, isAuthenticated } = useAuth();
+    const [showLoginAlert, setShowLoginAlert] = useState(false);
+    
+    useEffect(() => {
+        // If not authenticated, show the alert briefly before redirecting
+        if (!isAuthenticated) {
+            setShowLoginAlert(true);
+            // Set a timeout to redirect after showing the message
+            const timer = setTimeout(() => {
+                setShowLoginAlert(false);
+            }, 3000); // Show for 3 seconds
+            
+            return () => clearTimeout(timer);
+        }
+    }, [isAuthenticated]);
 
-    // If user is not authenticated, redirect to login
+    // If user is not authenticated, show alert and then redirect
     if (!isAuthenticated) {
-        return <Navigate to="/login" />;
+        return (
+            <div className="container mx-auto py-8">
+                {showLoginAlert && (
+                    <Alert variant="destructive" className="mb-4">
+                        <AlertTitle>Authentication Required</AlertTitle>
+                        <AlertDescription>
+                            You must be logged in to access the dashboard. Redirecting to login page...
+                        </AlertDescription>
+                    </Alert>
+                )}
+                <Navigate to="/login" />
+            </div>
+        );
     }
 
     return (
         <div className="container mx-auto py-8">
-            <div className="max-w-md mx-auto bg-white rounded-lg shadow p-6">
+            <div className="max-w-md mx-auto bg-white rounded-lg shadow p-6 dark:bg-gray-800">
                 <h1 className="text-2xl font-bold mb-4">Welcome to PentyFlix Dashboard</h1>
 
                 <div className="mb-6">

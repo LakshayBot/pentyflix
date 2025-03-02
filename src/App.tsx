@@ -5,6 +5,8 @@ import Dashboard from "@/pages/dashboard";
 import "./App.css";
 import { GalleryVerticalEnd } from "lucide-react";
 import signinImage from "./images/siginI_image.jpg"
+import RegisterPage from "@/pages/RegisterPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -54,6 +56,8 @@ function AppRoutes() {
       <Route path="/login" element={
         isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />
       } />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <Dashboard />
