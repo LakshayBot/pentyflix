@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
@@ -769,3 +770,171 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+=======
+// src/components/ui/sidebar.tsx
+import { useAuth } from "@/stores/auth/auth-context";
+import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+
+interface SidebarProps {
+    className?: string;
+    isCollapsed?: boolean;
+    setIsCollapsed?: (value: boolean) => void;
+}
+
+export function Sidebar({
+    className,
+    isCollapsed = false,
+    setIsCollapsed
+}: SidebarProps) {
+    const { user } = useAuth();
+    
+    // Auto-collapse sidebar on small screens
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768 && !isCollapsed && setIsCollapsed) {
+                setIsCollapsed(true);
+            }
+        };
+        
+        // Initial check
+        handleResize();
+        
+        // Add event listener
+        window.addEventListener('resize', handleResize);
+        
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [isCollapsed, setIsCollapsed]);
+
+    return (
+        <div
+            className={cn(
+                "flex flex-col h-screen bg-white dark:bg-gray-800 border-r border-border transition-all duration-300",
+                // Make the sidebar fixed position on mobile
+                "fixed md:sticky top-0 z-30",
+                // Control width based on collapse state and screen size
+                isCollapsed ? "w-16" : "w-64",
+                // When fully collapsed on mobile, hide completely
+                isCollapsed && "sm:w-16 max-sm:-translate-x-full",
+                className
+            )}
+        >
+            {/* Logo */}
+            <div className="p-4 border-b border-border flex items-center justify-between">
+                {!isCollapsed && (
+                    <span className="font-bold text-lg">PentyFlix</span>
+                )}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="ml-auto"
+                    onClick={() => setIsCollapsed && setIsCollapsed(!isCollapsed)}
+                >
+                    {isCollapsed ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                    ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="m15 18-6-6 6-6" />
+                        </svg>
+                    )}
+                </Button>
+            </div>
+
+            {/* Nav Items */}
+            <nav className="flex-1 overflow-y-auto py-4">
+                <ul className="space-y-1 px-2">
+                    <NavItem isCollapsed={isCollapsed} icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg>
+                    } href="/dashboard" label="Home" />
+                    <NavItem isCollapsed={isCollapsed} icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8H4Z" />
+                            <path d="m3 7 7-3 5 3 7-3v4l-7 3-5-3-7 3V7Z" />
+                        </svg>
+                    } href="/movies" label="Movies" />
+                    <NavItem isCollapsed={isCollapsed} icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <rect width="20" height="14" x="2" y="3" rx="2" />
+                            <line x1="8" x2="16" y1="21" y2="21" />
+                            <line x1="12" x2="12" y1="17" y2="21" />
+                        </svg>
+                    } href="/tv-shows" label="TV Shows" />
+                    <NavItem isCollapsed={isCollapsed} icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="M21 15V6" />
+                            <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                            <path d="M12 12H3" />
+                            <path d="M16 6H3" />
+                            <path d="M12 18H3" />
+                        </svg>
+                    } href="/playlists" label="My Playlists" />
+                    <NavItem isCollapsed={isCollapsed} icon={
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                            <path d="M21 12c0-2.7-.4-5.3-2-7-1.4-1.3-3-2-5-2s-3.6.7-5 2c-1.6 1.7-2 4.3-2 7 0 2.7.4 5.3 2 7 1.4 1.3 3 2 5 2s3.6-.7 5-2c1.6-1.7 2-4.3 2-7Z" />
+                            <path d="M4 15H2c0-2.5 1.1-4.8 3-6.3" />
+                            <path d="M2 9h2c0 2.5 1.1 4.8 3 6.3" />
+                            <path d="m12 8-2 3 3 1-2 3" />
+                        </svg>
+                    } href="/discover" label="Discover" />
+                </ul>
+            </nav>
+
+            {/* User Profile Section - Now at the bottom */}
+            <div className="mt-auto p-4 border-t border-border">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-medium">
+                        {user ? (
+                            user.firstName && user.lastName
+                                ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+                                : user.userName?.slice(0, 2).toUpperCase() || 'U'
+                        ) : (
+                            'U'
+                        )}
+                    </div>
+                    {!isCollapsed && (
+                        <div className="overflow-hidden">
+                            <p className="text-sm font-medium truncate">
+                                {user?.userName || 'User'}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                                {user?.email || 'No email available'}
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+interface NavItemProps {
+    icon: React.ReactNode;
+    label: string;
+    href: string;
+    isCollapsed: boolean;
+}
+
+function NavItem({ icon, label, href, isCollapsed }: NavItemProps) {
+    return (
+        <li>
+            <Link
+                to={href}
+                className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+            >
+                {icon}
+                {!isCollapsed && <span>{label}</span>}
+            </Link>
+        </li>
+    );
+}
+>>>>>>> 9d78d95 (Dashboard Changes)
