@@ -227,12 +227,11 @@ export default function Dashboard() {
     loading: boolean,
     error: string | null
   }>>({});
-  const [loadingKeywords, setLoadingKeywords] = useState(false);
   const [keywordsError, setKeywordsError] = useState<string | null>(null);
 
   // New state to track which keywords have been loaded
   const [loadedKeywords, setLoadedKeywords] = useState<Set<string>>(new Set());
-  const [batchSize, setBatchSize] = useState(2); // Number of keywords to load in each batch
+  const [batchSize] = useState(2); // Number of keywords to load in each batch
   const [isLoadingBatch, setIsLoadingBatch] = useState(false);
 
   const { user, logout, isAuthenticated } = useAuth();
@@ -240,12 +239,6 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mediaResults, setMediaResults] = useState<MediaItem[]>([]);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Add this to ensure consistent sidebar toggling
-  const toggleSidebar = () => {
-    setSidebarCollapsed(prev => !prev);
-  };
 
   // Fetch trending Reddit channels
   useEffect(() => {
@@ -274,10 +267,11 @@ export default function Dashboard() {
   }, []);
 
   // Fetch keywords from the API
+  // Fetch keywords from the API
   useEffect(() => {
     const fetchKeywords = async () => {
       try {
-        setLoadingKeywords(true);
+        setIsLoadingBatch(true);
         setKeywordsError(null);
 
         const response = await api.get("/NsfwKeywords");
@@ -308,13 +302,12 @@ export default function Dashboard() {
         setKeywordsError("Failed to load content keywords");
         setKeywords([]);
       } finally {
-        setLoadingKeywords(false);
+        setIsLoadingBatch(false);
       }
     };
 
     fetchKeywords();
   }, []);
-
   // Fetch channels for each keyword using individual requests
   useEffect(() => {
     // Skip if no keywords or already loading
